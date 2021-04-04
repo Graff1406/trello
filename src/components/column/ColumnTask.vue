@@ -159,11 +159,6 @@ export default {
       form: {}
     }
   },
-  // computed: {
-  //   handleForm () {
-  //     return this.deal
-  //   }
-  // },
   watch: {
     dialog (dialog) {
       if (dialog) this.form = { ...this.form, ...this.deal }
@@ -173,14 +168,6 @@ export default {
     save (text) {
       if (text) this.$emit('save', this.form)
     }
-    // editDescription () {
-    //   this.titlefield = true
-    //   // this.$refs.titleField.$el.focus()
-    //   console.log(111111, this.$refs.titleField)
-    // }
-    // openEditor () {
-    //   alert()
-    // }
   }
 }
 </script>

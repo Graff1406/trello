@@ -95,16 +95,6 @@ export default {
       this.deskTitle = ''
       this.newDesk = false
     },
-    // async deleteDesk (id) {
-    //   this.progress.delete = true
-    //   try {
-    //     await this.DELETE_DESK(id)
-    //   } catch (error) {
-    //     this.showError(error)
-    //   } finally {
-    //     this.progress.delete = false
-    //   }
-    // },
     showError (error) {
       console.error(error)
       this.snackbar.show = true
