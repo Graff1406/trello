@@ -2,13 +2,22 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import Home from '@/views/Home.vue'
 import Vuex from 'vuex'
+import {
+  GET_DESKS,
+  CREATE_DESK
+} from '@/store/modules/actionNames'
+import { SET_DESKS } from '@/store/modules/mutationNames'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe.skip('Home.vue', () => {
-  let wrapper, store
+  let wrapper, store, actions
   beforeEach(() => {
+    actions = {
+      [CREATE_DESK]: jest.fn().mockResolvedValue({ id: 1 }),
+      [GET_DESKS]: jest.fn().mockResolvedValue({ id: 1, title: 'test' })
+    }
     store = new Vuex.Store({
       modules: {
         home: {
@@ -16,18 +25,11 @@ describe.skip('Home.vue', () => {
             desks: []
           },
           mutations: {
-            SET_DESKS (state, desks) {
+            [SET_DESKS] (state, desks) {
               state.desks = desks
             }
           },
-          actions: {
-            GET_DESKS ({ commit }) {
-              commit('SET_DESKS', [{
-                id: 1,
-                title: 'test'
-              }])
-            }
-          }
+          actions
         }
       }
     })
@@ -49,5 +51,9 @@ describe.skip('Home.vue', () => {
   })
   it('Set new desks', () => {
     expect(wrapper.vm.desks.length).toBeTruthy()
+  })
+  it('should be call action', async () => {
+    await wrapper.find('#btn-add-desk').trigger('click')
+    expect(actions.CREATE_DESK).toHaveBeenCalled()
   })
 })

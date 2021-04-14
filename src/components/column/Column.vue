@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-2 column-desk" outlined>
+  <v-card :id="desk.id" class="ma-2 column-desk" outlined>
     <v-card-title>
       <span
         class="subtitle-2"
@@ -16,16 +16,19 @@
         <v-icon>delete</v-icon>
       </v-btn>
     </v-card-title>
-
     <v-card-text class="pa-2">
-      <ColumnTask
-        v-for="deal in desk.deals"
-        :key="deal.id"
-        :deal="deal"
-        :progress-save="progress.updateForm"
-        @delete-task="deleteTask"
-        @save="saveDataFormDialog"
-      />
+      <drag-and-drop :deals.sync="list" :id="desk.id">
+        <ColumnTask
+          v-for="deal in list"
+          :key="deal.id"
+          :deal="deal"
+          :last-column="lastColumn"
+          :progress-save="progress.updateForm"
+          @delete-task="deleteTask"
+          @save-task="saveDataFormDialog"
+          @move-to-next="$emit('move-to-next', {dealId: deal.id, deskId: desk.id})"
+        />
+      </drag-and-drop>
       <div class="mt-3">
         <v-text-field
           v-model="dealTitle"
@@ -66,20 +69,24 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+import DragAndDrop from './DragAndDrop'
 import ColumnTask from '@/components/column/ColumnTask'
 export default {
   name: 'Column',
   components: {
+    DragAndDrop,
     ColumnTask
   },
   props: {
     desk: {
       type: Object,
       default: () => ({})
-    }
+    },
+    lastColumn: Boolean
   },
   data () {
     return {
+      drag: true,
       newCardCreating: false,
       dealTitle: '',
       deal: {
@@ -96,6 +103,17 @@ export default {
         delete: false,
         addCard: false,
         updateForm: false
+      }
+    }
+  },
+  computed: {
+    list: {
+      get () {
+        return this.desk.deals
+      },
+      set (deals) {
+        const desk = { ...this.desk, deals }
+        this.$emit('update-deals', desk)
       }
     }
   },
@@ -116,8 +134,8 @@ export default {
       try {
         if (this.dealTitle) {
           const deals = this.desk.deals
-            ? [...this.desk.deals, { title: this.dealTitle, id: this.desk.deals.length + 1 }]
-            : [{ title: this.dealTitle, id: 0 }]
+            ? [...this.desk.deals, { title: this.dealTitle, id: Math.random() }]
+            : [{ title: this.dealTitle, id: Math.random() }]
 
           await this.UPDATE_DESK({
             ...this.desk,

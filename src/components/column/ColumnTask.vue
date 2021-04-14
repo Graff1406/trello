@@ -31,6 +31,16 @@
               >
                 <v-icon>delete</v-icon>
               </v-btn>
+
+              <v-btn
+                v-if="!lastColumn"
+                icon
+                color="success"
+                class="mx-2"
+                @click="$emit('move-to-next')"
+              >
+                <v-icon>arrow_forward</v-icon>
+              </v-btn>
             </v-overlay>
           </v-fade-transition>
         </v-card>
@@ -55,7 +65,7 @@
             <v-col cols="12">
               <v-text-field
               v-model="form.title"
-              @blur="save(form.title)"
+              @blur="saveTask(form.title)"
               placeholder="Title"
               ref="titleField"
               outlined
@@ -65,7 +75,7 @@
             <v-col cols="12">
               <v-textarea
               v-model="form.description"
-              @blur="save(form.description)"
+              @blur="saveTask(form.description)"
               hide-details
               filled
               rows="2"
@@ -75,55 +85,6 @@
             </v-col>
           </v-row>
         </v-card-text>
-        <!-- <v-card-title class="title-height">
-          <v-text-field
-            @input="deal.title = $event"
-            @blur="$event('save')"
-            :value="deal.title"
-            placeholder="Placeholder"
-            ref="titleField"
-            outlined
-            hide-details
-            dense
-          ></v-text-field>
-        </v-card-title>
-
-        <v-card-text>
-          <div>
-            <div class="pb-3">
-              <span class="subtitle-2 mr-3">Description</span>
-              <v-btn v-if="descriptionBtns" text small color="secondary" @click.stop="descriptionBtns = false">
-                Edit
-              </v-btn>
-            </div>
-            <p
-              v-if="deal.description && !descriptionBtns"
-              @click.stop="descriptionBtns = true"
-              class="description"
-            >{{ deal.description }}</p>
-            <v-textarea
-              v-else
-              v-model="deal.description"
-              filled
-              rows="2"
-              name="input-7-4"
-              @focus.stop="descriptionBtns = true"
-              @blur.stop="descriptionBtns = false"
-            ></v-textarea>
-            <div v-if="descriptionBtns">
-              <v-btn depressed color="success" class="mr-2">
-                Save
-              </v-btn>
-              <v-btn
-                icon
-                color="secondary"
-                @click="descriptionBtns = false"
-              >
-                <v-icon>close</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </v-card-text> -->
 
         <v-divider></v-divider>
 
@@ -131,6 +92,7 @@
           <v-spacer></v-spacer>
           <v-btn
             color="secondary"
+            id="btn-close"
             text
             @click="dialog = false"
           >
@@ -149,7 +111,8 @@ export default {
       type: Object,
       default: () => ({})
     },
-    progressSave: Boolean
+    progressSave: Boolean,
+    lastColumn: Boolean
   },
   data () {
     return {
@@ -165,8 +128,8 @@ export default {
     }
   },
   methods: {
-    save (text) {
-      if (text) this.$emit('save', this.form)
+    saveTask (text) {
+      if (text) this.$emit('save-task', this.form)
     }
   }
 }
